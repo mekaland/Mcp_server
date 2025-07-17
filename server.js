@@ -2,6 +2,7 @@
   import { SSEServerTransport} from "@modelcontextprotocol/sdk/server/sse.js";
   import express from "express";
   import bodyParser from "body-parser";
+  import axios from "axios";
   import { z } from "zod";
   import pkg from "pg";
   const { Pool } = pkg;
@@ -20,156 +21,140 @@
   });
   //kullanıcı ekleme
   server.registerTool(
-    "createUser",
-    {
-      title: "Create User",
-      description: "Create a new user with name and email",
-      inputSchema: {
-        name: z.string(),
-        email: z.string(),
-      },
+  "createUserViaApi",
+  {
+    title: "Create User via API",
+    description: "Katmanlı API üzerinden yeni kullanıcı oluşturur",
+    inputSchema: {
+      name: z.string(),
+      email: z.string(),
     },
-    async({ name, email }) => {
-      try {
-        const result = await pool.query(
-          "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *",
-          [name, email]
-        );
-
-        return {
-          content: [
-            {
-              type: "text",
-              text: `✅ Kullanıcı eklendi: ${result.rows[0].name} (${result.rows[0].email})`,
-            },
-          ],
-        };
-      } catch (err) {
-        return {
-          content: [
-            {
-              type: "text",
-              text: `❌ Kullanıcı eklenemedi: ${err.message}`,
-            },
-          ],
-        };
-      }
+  },
+  async ({ name, email }) => {
+    try {
+      const response = await axios.post("http://localhost:3000/users", { name, email });
+      return {
+        content: [
+          {
+            type: "json",
+            data: response.data,
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ API çağrısı başarısız: ${error.message}`,
+          },
+        ],
+      };
     }
-  );
+  }
+);
 
   //kullancıı listeleme
   server.registerTool(
-    "listUsers",
-    {
-      title: "List Users",
-      description: "Get a list of all users",
-      inputSchema: {},
-    },
-    async () => {
-      try {
-        const result = await pool.query("SELECT * FROM users");
-        const users = result.rows;
-
-        if (users.length === 0) {
-          return {
-            content: [{ type: "text", text: "📭 Kayıtlı kullanıcı yok." }],
-          };
-        }
-
-        const text = users
-          .map((u) => `👤 ${u.name} (${u.email})`)
-          .join("\n");
-
-        return {
-          content: [{ type: "text", text }],
-        };
-      } catch (err) {
-        return {
-          content: [{ type: "text", text: `❌ Hata: ${err.message}` }],
-        };
-      }
+  "listUsersViaApi",
+  {
+    title: "List Users via API",
+    description: "Katmanlı API üzerinden kullanıcıları listeler",
+    inputSchema: {},
+  },
+  async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/users");
+      return {
+        content: [
+          {
+            type: "json",
+            data: response.data,
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ API çağrısı başarısız: ${error.message}`,
+          },
+        ],
+      };
     }
-  );
+  }
+);
 
   //kullanıcı güncelleme
-  server.registerTool(
-    "updateUser",
-    {
-      title: "Update User",
-      description: "Update a user's name and email by id",
-      inputSchema: {
-        id: z.number(),
-        name: z.string(),
-        email: z.string(),
-      },
+server.registerTool(
+  "updateUserViaApi",
+  {
+    title: "Update User via API",
+    description: "Katmanlı API üzerinden kullanıcı günceller",
+    inputSchema: {
+      id: z.number(),
+      name: z.string(),
+      email: z.string(),
     },
-    async ({ id, name, email }) => {
-      try {
-        const result = await pool.query(
-          "UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING *",
-          [name, email, id]
-        );
-
-        if (result.rowCount === 0) {
-          return {
-            content: [{ type: "text", text: `❌ Kullanıcı bulunamadı.` }],
-          };
-        }
-
-        return {
-          content: [
-            {
-              type: "text",
-              text: `✅ Kullanıcı güncellendi: ${result.rows[0].name} (${result.rows[0].email})`,
-            },
-          ],
-        };
-      } catch (err) {
-        return {
-          content: [{ type: "text", text: `❌ Hata: ${err.message}` }],
-        };
-      }
+  },
+  async ({ id, name, email }) => {
+    try {
+      const response = await axios.put(`http://localhost:3000/users/${id}`, { name, email });
+      return {
+        content: [
+          {
+            type: "json",
+            data: response.data,
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ API çağrısı başarısız: ${error.message}`,
+          },
+        ],
+      };
     }
-  );
+  }
+);
 
   //kullanıcı sil
-  server.registerTool(
-    "deleteUser",
-    {
-      title: "Delete User",
-      description: "Delete a user by id",
-      inputSchema: {
-        id: z.number(),
-      },
+ server.registerTool(
+  "deleteUserViaApi",
+  {
+    title: "Delete User via API",
+    description: "Katmanlı API üzerinden kullanıcı siler",
+    inputSchema: {
+      id: z.number(),
     },
-    async ({ id }) => {
-      try {
-        const result = await pool.query(
-          "DELETE FROM users WHERE id = $1 RETURNING *",
-          [id]
-        );
-
-        if (result.rowCount === 0) {
-          return {
-            content: [{ type: "text", text: `❌ Kullanıcı bulunamadı.` }],
-          };
-        }
-
-        return {
-          content: [
-            {
-              type: "text",
-              text: `🗑️ Kullanıcı silindi: ${result.rows[0].name}`,
-            },
-          ],
-        };
-      } catch (err) {
-        return {
-          content: [{ type: "text", text: `❌ Hata: ${err.message}` }],
-        };
-      }
+  },
+  async ({ id }) => {
+    try {
+      const response = await axios.delete(`http://localhost:3000/users/${id}`);
+      return {
+        content: [
+          {
+            type: "json",
+            data: response.data,
+          },
+        ],
+      };
+    } catch (error) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: `❌ API çağrısı başarısız: ${error.message}`,
+          },
+        ],
+      };
     }
-  );
+  }
+);
 
 
   // TOOLS
@@ -273,7 +258,7 @@ server.registerTool(
     description: "Son yanıtı kullanıcıya iletir",
     inputSchema: {
       method: z.string(),
-      params: z.any(), // tüm tool parametreleri için esnek yapı
+      params: z.any(), 
     },
   },
   async ({ method, params }) => {
