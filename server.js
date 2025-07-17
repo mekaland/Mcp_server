@@ -305,14 +305,6 @@ server.registerTool(
 
     await server.connect(transport);
   });
-  // app.post("/sse", async (req, res) => {
-  //   try {
-  //     const result = await server.handleRequest(req.body); // doğru metod bu
-  //     res.json(result);
-  //   } catch (err) {
-  //     res.status(500).json({ error: err.message });
-  //   }
-  // });
   app.post("/messages", async (req, res) => {
     console.log("POST /messages alındı:", req.query.sessionId, JSON.stringify(req.body, null, 2));
     const sessionId = req.query.sessionId;
