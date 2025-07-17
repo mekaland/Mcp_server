@@ -1,6 +1,6 @@
 # MCP Server Projesi
 
-![MCP Server](https://raw.githubusercontent.com/mekaland/Mcp_server/main/logo.png)  
+
 *ModelContextProtocol (MCP) tabanlı kullanıcı yönetimi ve yapay zeka destekli araçlar sunan Node.js sunucusu*
 
 ---
