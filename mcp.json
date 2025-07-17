@@ -1,0 +1,140 @@
+{
+  "name": "mcp",
+  "nodes": [
+    {
+      "parameters": {
+        "sseEndpoint": "http://host.docker.internal:4000/sse"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        0,
+        280
+      ],
+      "id": "a4e44315-a413-448d-91d1-cca118151bdc",
+      "name": "MCP Tool"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        280
+      ],
+      "id": "6fffbd3f-49c4-4941-9252-cbf75c739f79",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "5vqEtCIXzeBKX4eH",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -220,
+        280
+      ],
+      "id": "75d53479-8035-4453-92db-3548ad2e7e2b",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "2ZiYlFYa17hls4fV",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -300,
+        20
+      ],
+      "id": "1beeb762-6a3a-4afe-8196-fe406b03a562",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -500,
+        20
+      ],
+      "id": "f87dad01-b190-48c6-b06c-9926d232f34a",
+      "name": "When chat message received",
+      "webhookId": "53294824-63af-4ffc-879d-3bed15cafc00"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "MCP Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6dd5c23e-9c67-4545-9965-9dacb2f0d665",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e91f3d53ba5410c21b83dfda14be41a9f5f653c1fd0d7ac0851b7736ca42e6f5"
+  },
+  "id": "r5WuoRF4k2uvpbCh",
+  "tags": []
+}
