@@ -37,8 +37,12 @@ Bu proje, **ModelContextProtocol (MCP)** SDK’sı kullanılarak geliştirilmiş
 ├── .env                     # Ortam değişkenleri
 ├── mcp.json                 # n8n entegrasyonu için MCP Tool yapılandırması
 
+
+
 ⚙️ Özellikler
+
 ✅ Kullanıcı İşlemleri (API üzerinden)
+
 createUserViaApi: Yeni kullanıcı ekler
 
 listUsersViaApi: Tüm kullanıcıları listeler
@@ -56,17 +60,12 @@ format_final_json_response: AI agent için özel cevap formatlayıcı
 
 🧪 Kurulum
 1. MCP Server'ı Başlat
-bash
-Copy
-Edit
 npm install
 node server.js
 MCP Server, http://localhost:4000/sse adresinde çalışır.
 
 2. Katmanlı API’yi Docker ile Başlat
-bash
-Copy
-Edit
+
 docker-compose up -d
 API, http://localhost:3000/users üzerinden çalışır.
 
