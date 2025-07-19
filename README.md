@@ -1,55 +1,87 @@
-# MCP Server Projesi
+# 🚀 MCP HTTP Server + Katmanlı API + n8n Entegrasyonu
 
-
-*ModelContextProtocol (MCP) tabanlı kullanıcı yönetimi ve yapay zeka destekli araçlar sunan Node.js sunucusu*
-
----
-
-## 🚀 Proje Hakkında
-
-Bu proje, MCP (ModelContextProtocol) SDK kullanılarak geliştirilmiş, PostgreSQL veritabanı ile entegre çalışan bir Node.js sunucusudur. Kullanıcı ekleme, listeleme, güncelleme ve silme gibi temel CRUD işlemlerini REST ve SSE (Server-Sent Events) üzerinden destekler. Ayrıca, matematiksel araçlar ve şifre güç kontrolü gibi yardımcı fonksiyonlar da içerir.
-
-Projede ayrıca, n8n otomasyon platformunda kullanılmak üzere yapılandırılmış bir `mcp.json` dosyası bulunmaktadır. Bu dosya ile MCP araçları, Google Gemini dil modeli ve Postgres tabanlı sohbet belleği n8n iş akışlarına entegre edilir.
+Bu proje, **ModelContextProtocol (MCP)** SDK’sı kullanılarak geliştirilmiş, katmanlı mimariye sahip bir REST API ile entegre çalışan ve **n8n** otomasyon platformuna bağlanan bir Node.js sunucusudur.
 
 ---
 
-## 🛠️ Özellikler
+## 📌 Proje Hedefi
 
-- **Kullanıcı Yönetimi:**  
-  - `createUser`: Yeni kullanıcı ekleme  
-  - `listUsers`: Kayıtlı tüm kullanıcıları listeleme  
-  - `updateUser`: Kullanıcı bilgilerini güncelleme  
-  - `deleteUser`: Kullanıcı silme  
+💬 Kullanıcılarla doğal dilde etkileşim kuran bir yapay zeka aracılığıyla veritabanı işlemleri gerçekleştirmek. Sistem şunları içerir:
 
-- **Matematiksel İşlemler:**  
-  - Toplama, çıkarma, çarpma, bölme (bölme sıfıra bölünemez)  
-
-- **Şifre Güç Kontrolü:**  
-  - Uzunluk, büyük/küçük harf, rakam ve özel karakter kontrolü  
-  - Güç seviyesi: Zayıf, Orta, Güçlü  
-
-- **İleri MCP Entegrasyonu:**  
-  - `format_final_json_response` aracı ile JSON çıktı formatlama  
-  - n8n ile kolay entegrasyon için `mcp.json` workflow dosyası  
+- n8n AI Agent
+- Google Gemini Chat Model
+- PostgreSQL tabanlı kullanıcı yönetimi
+- MCP protokolü üzerinden veri akışı
 
 ---
 
-## 📋 Kurulum ve Çalıştırma
+## 🧱 Kullanılan Teknolojiler
 
-### Gereksinimler
+| Katman             | Teknolojiler                                  |
+|--------------------|-----------------------------------------------|
+| API Sunucusu       | Node.js, Express, PostgreSQL (Docker)         |
+| MCP Sunucusu       | @modelcontextprotocol/sdk                     |
+| AI & Otomasyon     | n8n, Google Gemini                            |
+| Bellek Sistemi     | PostgreSQL tabanlı Chat Memory                |
+| Protokoller        | Server-Sent Events (SSE), JSON-RPC            |
+| Yardımcılar        | Zod, Axios, body-parser, dotenv               |
 
-- Node.js (versiyon 16 veya üstü önerilir)  
-- PostgreSQL veritabanı (Docker ya da lokal)  
-- MCP SDK: `@modelcontextprotocol/sdk` ve diğer bağımlılıklar
+---
 
-### Veritabanı Ayarları
 
-PostgreSQL’de aşağıdaki bilgileri kullanarak bir `mcp` veritabanı oluşturun ve aşağıdaki tabloyu ekleyin:
+📦 Proje Yapısı
+.
+├── server.js                 # MCP HTTP Server
+├── docker-compose.yml       # Katmanlı API için Docker dosyası
+├── api/                     # Katmanlı REST API (controller, service, repo)
+├── .env                     # Ortam değişkenleri
+├── mcp.json                 # n8n entegrasyonu için MCP Tool yapılandırması
 
-```sql
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL UNIQUE,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+⚙️ Özellikler
+✅ Kullanıcı İşlemleri (API üzerinden)
+createUserViaApi: Yeni kullanıcı ekler
+
+listUsersViaApi: Tüm kullanıcıları listeler
+
+updateUserViaApi: Kullanıcı bilgilerini günceller
+
+deleteUserViaApi: Belirtilen kullanıcıyı siler
+
+➕ Yardımcı Araçlar
+add, subtract, multiply, divide: Basit matematiksel işlemler
+
+passwordStrengthChecker: Şifre gücünü analiz eder
+
+format_final_json_response: AI agent için özel cevap formatlayıcı
+
+🧪 Kurulum
+1. MCP Server'ı Başlat
+bash
+Copy
+Edit
+npm install
+node server.js
+MCP Server, http://localhost:4000/sse adresinde çalışır.
+
+2. Katmanlı API’yi Docker ile Başlat
+bash
+Copy
+Edit
+docker-compose up -d
+API, http://localhost:3000/users üzerinden çalışır.
+
+3. n8n Üzerinden Entegrasyon
+MCP Tool node → http://host.docker.internal:4000/sse
+
+Gemini, PostgreSQL ve MCP node’larını birbirine bağla.
+
+Örnek mcp.json dosyasını Import Workflow diyerek yükle.
+
+📮 API Endpoint'leri
+🔹 Katmanlı API (3000 Portu)
+Method	Endpoint	Açıklama
+GET	/users	Tüm kullanıcıları getir
+GET	/users/:id	Belirli kullanıcıyı getir
+POST	/users	Yeni kullanıcı ekle
+PUT	/users/:id	Kullanıcıyı güncelle
+DELETE	/users/:id	Kullanıcıyı sil
