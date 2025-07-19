@@ -39,48 +39,26 @@ Bu proje, **ModelContextProtocol (MCP)** SDK’sı kullanılarak geliştirilmiş
 
 
 
-⚙️ Özellikler
 
-✅ Kullanıcı İşlemleri (API üzerinden)
+### ✅ Kullanıcı İşlemleri (API Üzerinden)
 
-createUserViaApi: Yeni kullanıcı ekler
+- `createUserViaApi`: Yeni kullanıcı ekler  
+- `listUsersViaApi`: Tüm kullanıcıları listeler  
+- `updateUserViaApi`: Kullanıcı bilgilerini günceller  
+- `deleteUserViaApi`: Belirtilen kullanıcıyı siler  
 
-listUsersViaApi: Tüm kullanıcıları listeler
+### ➕ Yardımcı Araçlar
 
-updateUserViaApi: Kullanıcı bilgilerini günceller
+- `add`, `subtract`, `multiply`, `divide`: Basit matematiksel işlemler  
+- `passwordStrengthChecker`: Şifre gücünü analiz eder  
+- `format_final_json_response`: AI agent için özel cevap formatlayıcı  
 
-deleteUserViaApi: Belirtilen kullanıcıyı siler
+---
 
-➕ Yardımcı Araçlar
-add, subtract, multiply, divide: Basit matematiksel işlemler
+## 🧪 Kurulum
 
-passwordStrengthChecker: Şifre gücünü analiz eder
+### 1. MCP Server'ı Başlat
 
-format_final_json_response: AI agent için özel cevap formatlayıcı
-
-🧪 Kurulum
-1. MCP Server'ı Başlat
+```bash
 npm install
 node server.js
-MCP Server, http://localhost:4000/sse adresinde çalışır.
-
-2. Katmanlı API’yi Docker ile Başlat
-
-docker-compose up -d
-API, http://localhost:3000/users üzerinden çalışır.
-
-3. n8n Üzerinden Entegrasyon
-MCP Tool node → http://host.docker.internal:4000/sse
-
-Gemini, PostgreSQL ve MCP node’larını birbirine bağla.
-
-Örnek mcp.json dosyasını Import Workflow diyerek yükle.
-
-📮 API Endpoint'leri
-🔹 Katmanlı API (3000 Portu)
-Method	Endpoint	Açıklama
-GET	/users	Tüm kullanıcıları getir
-GET	/users/:id	Belirli kullanıcıyı getir
-POST	/users	Yeni kullanıcı ekle
-PUT	/users/:id	Kullanıcıyı güncelle
-DELETE	/users/:id	Kullanıcıyı sil
